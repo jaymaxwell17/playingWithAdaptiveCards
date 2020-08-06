@@ -2,11 +2,18 @@
 <html>
 <head>
 	
-
+<style type="text/css">
+	#frame {
+    height: 500px;
+    width: 500px;
+}
+</style>
 
 </head>
 <body>
-
+<div id="frame">
+    
+</div>
 	<script src="https://unpkg.com/adaptivecards/dist/adaptivecards.min.js"></script>
 	<script type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -14,11 +21,13 @@
 
 	<script>
 
-		var result;
+		function findNewUser(){
+			fetch('https://randomuser.me/api/')
+			.then(response => response.json())
+			.then(data => createAndRender(data));
+		}
 
-		fetch('https://randomuser.me/api/')
-		.then(response => response.json())
-		.then(data => createAndRender(data));
+		
 
 		function createAndRender(data){
 			var user = data.results[0]; 
@@ -251,7 +260,11 @@
 							"card": passwordCard,
 							"id": "show",
 							"title": "Show Login Info"
-						}
+						},
+						{
+                    		"type": "Action.Submit",
+                    		"title": "Find New Random User"
+                		}
 						]
 					}
 					],
@@ -270,11 +283,6 @@ adaptiveCard.hostConfig = new AdaptiveCards.HostConfig({
 
 });
 
-// Set the adaptive card's event handlers. onExecuteAction is invoked
-// whenever an action is clicked in the card
-adaptiveCard.onExecuteAction = function(action) { 
-	console.log(action);
-}
 
 // Parse the card payload
 adaptiveCard.parse(card);
@@ -283,11 +291,16 @@ adaptiveCard.parse(card);
 var renderedCard = adaptiveCard.render();
 
 // And finally insert it somewhere in your page:
-document.body.appendChild(renderedCard);
+document.getElementById('frame').appendChild(adaptiveCard.render());
 
+adaptiveCard.onExecuteAction = function(action) {
+	document.getElementById("frame").innerHTML = "";
+	findNewUser();}
 
 
 }
+
+findNewUser();
 
 
 

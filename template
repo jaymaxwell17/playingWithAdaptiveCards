@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+<style type="text/css">
+	#frame {
+    height: 500px;
+    width: 500px;
+}
+</style>
+
+</head>
+<body>
+<div id="frame">
+    
+</div>
+	<script src="https://unpkg.com/adaptivecards/dist/adaptivecards.min.js"></script>
+	<script type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/adaptivecards-templating/dist/adaptivecards-templating.min.js"></script>
+
+<script type="text/javascript">
+	
+// Define a template payload
+var templatePayload = 
+
+
+ 
+// Create a Template instance from the template payload
+var template = new ACData.Template(templatePayload);
+ 
+// Expand the template with your `$root` data object.
+// This binds it to the data and produces the final Adaptive Card payload
+var cardPayload = template.expand({
+   $root: 
+
+});
+ 
+// OPTIONAL: Render the card (requires that the adaptivecards library be loaded)
+var adaptiveCard = new AdaptiveCards.AdaptiveCard();
+adaptiveCard.parse(cardPayload);
+
+adaptiveCard.onExecuteAction = function(action) { alert(JSON.stringify(action.data)); }
+
+document.getElementById('frame').appendChild(adaptiveCard.render());
+
+</script>
+
+
+</body>
+</html>

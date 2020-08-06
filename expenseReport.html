@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+<style type="text/css">
+	#frame {
+    height: 500px;
+    width: 500px;
+}
+</style>
+
+</head>
+<body>
+<div id="frame">
+    
+</div>
+	<script src="https://unpkg.com/adaptivecards/dist/adaptivecards.min.js"></script>
+	<script type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/adaptivecards-templating/dist/adaptivecards-templating.min.js"></script>
+
+<script type="text/javascript">
+	
+// Define a template payload
+var templatePayload = {
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "size": "Large",
+                  "weight": "Bolder",
+                  "text": "**EXPENSE APPROVAL**"
+                }
+              ],
+              "width": "stretch"
+            },
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "Image",
+                  "url": "${status_url}",
+                  "altText": "${status}",
+                  "height": "30px"
+                }
+              ],
+              "width": "auto"
+            }
+          ]
+        }
+      ],
+      "bleed": true
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "size": "ExtraLarge",
+                  "text": "${purpose}",
+                  "wrap": true
+                },
+                {
+                  "type": "TextBlock",
+                  "spacing": "Small",
+                  "size": "Small",
+                  "weight": "Bolder",
+                  "color": "Accent",
+                  "text": "[${code}](https://adaptivecards.io)"
+                }
+              ],
+              "width": "stretch"
+            },
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.OpenUrl",
+                      "title": "EXPORT AS PDF",
+                      "url": "https://adaptivecards.io"
+                    }
+                  ]
+                }
+              ],
+              "width": "auto"
+            }
+          ]
+        },
+        {
+          "type": "FactSet",
+          "spacing": "Large",
+          "facts": [
+            {
+              "title": "Submitted By",
+              "value": "**${created_by_name}**  ${creater_email}"
+            },
+            {
+              "title": "Duration",
+              "value": "${formatTicks(min(select(expenses, x, int(x.created_by))), 'yyyy-MM-dd')} - ${formatTicks(max(select(expenses, x, int(x.created_by))), 'yyyy-MM-dd')}"
+            },
+            {
+              "title": "Submitted On",
+              "value": "${formatDateTime(submitted_date, 'yyyy-MM-dd')}"
+            },
+            {
+              "title": "Reimbursable Amount",
+              "value": "$${formatNumber(sum(select(expenses, x, if(x.is_reimbursable, x.total, 0))), 2)}"
+            },
+            {
+              "title": "Awaiting approval from",
+              "value": "**${approver}**  ${approver_email}"
+            },
+            {
+              "title": "Submitted to",
+              "value": "**${other_submitter}**   ${other_submitter_email}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "spacing": "Large",
+      "style": "emphasis",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "weight": "Bolder",
+                  "text": "DATE"
+                }
+              ],
+              "width": "auto"
+            },
+            {
+              "type": "Column",
+              "spacing": "Large",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "weight": "Bolder",
+                  "text": "CATEGORY"
+                }
+              ],
+              "width": "stretch"
+            },
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "weight": "Bolder",
+                  "text": "AMOUNT"
+                }
+              ],
+              "width": "auto"
+            }
+          ]
+        }
+      ],
+      "bleed": true
+    },
+    {
+      "$data": "${expenses}",
+      "type" : "Container",
+      "items": [
+      {
+        "type": "ColumnSet",
+        "columns": [
+          {
+            "type": "Column",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "${formatDateTime(created_time, 'MM-dd')}",
+                "wrap": true
+              }
+            ],
+            "width": "auto"
+          },
+          {
+            "type": "Column",
+            "spacing": "Medium",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "${description}",
+                "wrap": true
+              }
+            ],
+            "width": "stretch"
+          },
+          {
+            "type": "Column",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "$${formatNumber(total, 2)}",
+                "wrap": true
+              }
+            ],
+            "width": "auto"
+          },
+          {
+            "type": "Column",
+            "id": "chevronDown${$index}",
+            "spacing": "Small",
+            "verticalContentAlignment": "Center",
+            "items": [
+              {
+                "type": "Image",
+                "selectAction": {
+                  "type": "Action.ToggleVisibility",
+                  "title": "collapse",
+                  "targetElements": [
+                    "cardContent${$index}",
+                    "chevronUp${$index}",
+                    "chevronDown${$index}"
+                  ]
+                },
+                "url": "https://adaptivecards.io/content/down.png",
+                "width": "20px",
+                "altText": "collapsed"
+              }
+            ],
+            "width": "auto"
+          },
+          {
+            "type": "Column",
+            "id": "chevronUp${$index}",
+            "isVisible": false,
+            "spacing": "Small",
+            "verticalContentAlignment": "Center",
+            "items": [
+              {
+                "type": "Image",
+                "selectAction": {
+                  "type": "Action.ToggleVisibility",
+                  "title": "expand",
+                  "targetElements": [
+                    "cardContent${$index}",
+                    "chevronUp${$index}",
+                    "chevronDown${$index}"
+                  ]
+                },
+                "url": "https://adaptivecards.io/content/up.png",
+                "width": "20px",
+                "altText": "expanded"
+              }
+            ],
+            "width": "auto"
+          }
+        ]
+      },
+      {
+        "type": "Container",
+        "id": "cardContent${$index}",
+        "isVisible": false,
+        "items": [
+          {
+            "type": "Container",
+            "items": [
+              {
+                "$data": "${custom_fields}",
+                "type": "TextBlock",
+                "text": "* ${value}",
+                "isSubtle": true,
+                "wrap": true
+              },
+              {
+                "type": "Container",
+                "items": [
+                  {
+                    "type": "Input.Text",
+                    "id": "comment${$index}",
+                    "placeholder": "Add your comment here."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Container",
+            "items": [
+              {
+                "type": "ColumnSet",
+                "columns": [
+                  {
+                    "type": "Column",
+                    "items": [
+                      {
+                        "type": "ActionSet",
+                        "actions": [
+                          {
+                            "type": "Action.Submit",
+                            "title": "Send",
+                            "data": {
+                              "id": "_qkQW8dJlUeLVi7ZMEzYVw",
+                              "action": "comment",
+                              "lineItem": 1
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "width": "auto"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+      ]
+    },		
+    {
+      "type": "ColumnSet",
+      "spacing": "Large",
+      "separator": true,
+      "columns": [
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "horizontalAlignment": "Right",
+              "text": "Total Expense Amount \t",
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "horizontalAlignment": "Right",
+              "text": "Non-reimbursable Amount",
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "horizontalAlignment": "Right",
+              "text": "Advance Amount",
+              "wrap": true
+            }
+          ],
+          "width": "stretch"
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "$${formatNumber(sum(select(expenses, x, x.total)), 2)}"
+            },
+            {
+              "type": "TextBlock",
+              "text": "(-) $${formatNumber(sum(select(expenses, x, if(x.is_reimbursable, 0, x.total))), 2)} \t"
+            },
+            {
+              "type": "TextBlock",
+              "text": "(-) 0.00 \t"
+            }
+          ],
+          "width": "auto"
+        },
+        {
+          "type": "Column",
+          "width": "auto"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "horizontalAlignment": "Right",
+                  "text": "Amount to be Reimbursed",
+                  "wrap": true
+                }
+              ],
+              "width": "stretch"
+            },
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "weight": "Bolder",
+                  "text": "$${formatNumber(sum(select(expenses, x, if(x.is_reimbursable, x.total, 0))), 2)}"
+                }
+              ],
+              "width": "auto"
+            },
+            {
+              "type": "Column",
+              "width": "auto"
+            }
+          ]
+        }
+      ],
+      "bleed": true
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "id": "chevronDown4",
+              "selectAction": {
+                "type": "Action.ToggleVisibility",
+                "title": "show history",
+                "targetElements": [
+                  "cardContent4",
+                  "chevronUp4",
+                  "chevronDown4"
+                ]
+              },
+              "verticalContentAlignment": "Center",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "horizontalAlignment": "Right",
+                  "color": "Accent",
+                  "text": "Show history",
+                  "wrap": true
+                }
+              ],
+              "width": 1
+            },
+            {
+              "type": "Column",
+              "id": "chevronUp4",
+              "isVisible": false,
+              "selectAction": {
+                "type": "Action.ToggleVisibility",
+                "title": "hide history",
+                "targetElements": [
+                  "cardContent4",
+                  "chevronUp4",
+                  "chevronDown4"
+                ]
+              },
+              "verticalContentAlignment": "Center",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "horizontalAlignment": "Right",
+                  "color": "Accent",
+                  "text": "Hide history",
+                  "wrap": true
+                }
+              ],
+              "width": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "id": "cardContent4",
+      "isVisible": false,
+      "items": [
+        {
+          "type": "Container",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "* Expense submitted by **${created_by_name}** on {{DATE(${formatDateTime(created_date, 'yyyy-MM-ddTHH:mm:ssZ')}, SHORT)}}",
+              "isSubtle": true,
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "text": "* Expense ${expenses[0].status} by **${expenses[0].approver}** on {{DATE(${formatDateTime(approval_date, 'yyyy-MM-ddTHH:mm:ssZ')}, SHORT)}}",
+              "isSubtle": true,
+              "wrap": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ActionSet",
+          "actions": [
+            {
+              "type": "Action.Submit",
+              "title": "Approve",
+              "style": "positive",
+              "data": {
+                "id": "_qkQW8dJlUeLVi7ZMEzYVw",
+                "action": "approve"
+              }
+            },
+            {
+              "type": "Action.ShowCard",
+              "title": "Reject",
+              "style": "destructive",
+              "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                  {
+                    "type": "Input.Text",
+                    "id": "RejectCommentID",
+                    "placeholder": "Please specify an appropriate reason for rejection.",
+                    "isMultiline": true
+                  }
+                ],
+                "actions": [
+                  {
+                    "type": "Action.Submit",
+                    "title": "Send",
+                    "data": {
+                      "id": "_qkQW8dJlUeLVi7ZMEzYVw",
+                      "action": "reject"
+                    }
+                  }
+                ],
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.2",
+  "fallbackText": "This card requires Adaptive Cards v1.2 support to be rendered properly."
+}
+
+
+
+ 
+// Create a Template instance from the template payload
+var template = new ACData.Template(templatePayload);
+ 
+// Expand the template with your `$root` data object.
+// This binds it to the data and produces the final Adaptive Card payload
+var cardPayload = template.expand({
+   $root: {
+  "code": "ER-13052",
+  "message": "success",
+  "created_by_name" : "Matt Hidinger",
+  "created_date" : "2019-07-15T18:33:12+0800",
+    "submitted_date": "2019-04-14T18:33:12+0800",
+    "creater_email" : "matt@contoso.com",
+  "status" : "Pending",
+    "status_url" : "https://adaptivecards.io/content/pending.png",
+  "approver": "Thomas",
+    "purpose" : "Trip to UAE",
+  "approval_date" : "2019-07-15T22:33:12+0800",
+    "approver" : "Thomas",
+    "approver_email" : "thomas@contoso.com",
+    "other_submitter" : "David", 
+    "other_submitter_email" : "david@contoso.com", 
+
+  "expenses": [
+    {
+      "expense_id": "16367000000083065",
+            "approver" : "Thomas",
+      "date": "2017-02-21",
+      "description": "Air Travel Expense",
+      "created_by": "636965431200000000",
+      "created_by_name": "PATRICIA",
+      "employee_number": "E001",
+      "currency_id": "16367000000000097",
+      "currency_code": "USD",
+      "paid_through_account_id": "16367000000036003",
+      "paid_through_account_name": "Employee Reimbursements",
+      "bcy_total": 13900.79,
+      "bcy_subtotal": 13900.79,
+      "total": 300,
+      "total_without_tax": 300,
+      "is_billable": true,
+      "is_reimbursable": true,
+      "reference_number": "DD145",
+      "due_days": "Due in 15 days",
+      "merchant_id": "16367000000074027",
+      "merchant_name": "ABS Solutions",
+      "status": "approved",
+      "created_time": "2019-06-19T18:33:12+0800",
+      "last_modified_time": "2017-02-21T18:42:46+0530",
+      "receipt_name": "receipt1.jpg",
+      "report_id": "16367000000083075",
+      "mileage_type": "non_mileage",
+      "report_name": "Purchase",
+      "is_receipt_only": false,
+      "distance": 0,
+      "per_diem_rate": 0,
+      "per_diem_days": 0,
+      "per_diem_id": "",
+      "per_diem_name": "",
+      "expense_type": "non_mileage",
+      "location": "Washington",
+      "receipt_type": "jpg",
+      "policy_violated": false,
+      "comments_count": 0,
+      "report_status": "submitted",
+      "price_precision": 2,
+      "mileage_rate": 0,
+      "mileage_unit": "km",
+      "receipt_status": "processed",
+      "is_uncategorized": false,
+      "is_expired": false,
+      "gl_code": "LG001",
+      "exchange_rate": 66.943366,
+      "start_reading": "",
+      "end_reading": "",
+      "payment_mode": "Check",
+      "customer_id": "27927000000075081",
+      "customer_name": "ACME Corp.",
+      "custom_fields": [
+        {
+          "customfield_id": "16367000000277001",
+          "label": "Other Name",
+          "value": "Leg 1 on Tue, Jun 19th, 2019 at 6:00 AM."
+        },
+        {
+          "customfield_id": "16367000000277001",
+          "label": "Other Name",
+          "value": "Leg 2 on Tue,Jun 19th, 2019 at 7:15 PM."
+        }				
+      ],
+      "project_id": "27927000001243001",
+      "project_name": "Coffee Research",
+      "transaction_description": "",
+      "tax_id": "16367000000086001",
+      "tax_name": "Sales Tax",
+      "tax_percentage": 2,
+      "amount": 207.65,
+      "is_inclusive_tax": false,
+      "vehicle_type": "Bike",
+      "vehicle_id": "17456000000078029",
+      "fuel_type": "lpg",
+      "engine_capacity_range": "between_1401cc_and_1600cc",
+      "is_personal": false,
+      "policy_id": "16367000000092011",
+      "policy_name": "LIC",
+      "documents": [
+        {
+          "file_name": "receipt1.jpg",
+          "file_size_formatted": "71.8 KB",
+          "attachment_order": 1,
+          "document_id": "16367000000083071"
+        }
+      ],
+      "reimbursement_reference": "",
+      "reimbursement_date": "",
+      "reimbursement_paid_through_account_id": "",
+      "reimbursement_paid_through_account_name": "",
+      "reimbursement_currency_id": "",
+      "reimbursement_currency_code": ""
+    },
+    {
+      "expense_id": "16367000000083065",
+      "date": "2019-06-19",
+      "description": "Auto Mobile Expense",
+      "created_by": "636965431200000000",
+      "created_by_name": "PATRICIA",
+      "employee_number": "E001",
+      "currency_id": "16367000000000097",
+      "currency_code": "USD",
+      "paid_through_account_id": "16367000000036003",
+      "paid_through_account_name": "Employee Reimbursements",
+      "bcy_total": 13900.79,
+      "bcy_subtotal": 13900.79,
+      "total": 100,
+      "total_without_tax": 100,
+      "is_billable": true,
+      "is_reimbursable": true,
+      "reference_number": "DD145",
+      "due_days": "Due in 15 days",
+      "merchant_id": "16367000000074027",
+      "merchant_name": "ABS Solutions",
+      "status": "submitted",
+      "created_time": "2019-06-19T18:33:12+0800",
+      "last_modified_time": "2017-02-21T18:42:46+0530",
+      "receipt_name": "receipt1.jpg",
+      "report_id": "16367000000083075",
+      "mileage_type": "non_mileage",
+      "report_name": "Purchase",
+      "is_receipt_only": false,
+      "distance": 0,
+      "per_diem_rate": 0,
+      "per_diem_days": 0,
+      "per_diem_id": "",
+      "per_diem_name": "",
+      "expense_type": "non_mileage",
+      "location": "Washington",
+      "receipt_type": "jpg",
+      "policy_violated": false,
+      "comments_count": 0,
+      "report_status": "submitted",
+      "price_precision": 2,
+      "mileage_rate": 0,
+      "mileage_unit": "km",
+      "receipt_status": "processed",
+      "is_uncategorized": false,
+      "is_expired": false,
+      "gl_code": "LG001",
+      "exchange_rate": 66.943366,
+      "start_reading": "",
+      "end_reading": "",
+      "payment_mode": "Check",
+      "customer_id": "27927000000075081",
+      "customer_name": "ACME Corp.",
+      "custom_fields": [
+        {
+          "customfield_id": "16367000000277001",
+          "label": "Other Name",
+          "value": " Contoso Car Rentrals, Tues 6/19 at 7:00 AM"
+        }
+      ],
+      "project_id": "27927000001243001",
+      "project_name": "Coffee Research",
+      "transaction_description": "",
+      "tax_id": "16367000000086001",
+      "tax_name": "Sales Tax",
+      "tax_percentage": 2,
+      "amount": 207.65,
+      "is_inclusive_tax": false,
+      "vehicle_type": "Bike",
+      "vehicle_id": "17456000000078029",
+      "fuel_type": "lpg",
+      "engine_capacity_range": "between_1401cc_and_1600cc",
+      "is_personal": false,
+      "policy_id": "16367000000092011",
+      "policy_name": "LIC",
+      "documents": [
+        {
+          "file_name": "receipt1.jpg",
+          "file_size_formatted": "71.8 KB",
+          "attachment_order": 1,
+          "document_id": "16367000000083071"
+        }
+      ],
+      "reimbursement_reference": "",
+      "reimbursement_date": "",
+      "reimbursement_paid_through_account_id": "",
+      "reimbursement_paid_through_account_name": "",
+      "reimbursement_currency_id": "",
+      "reimbursement_currency_code": ""
+    },
+    {
+      "expense_id": "16367000000083065",
+      "date": "2019-06-21",
+      "description": "Excess Bagage Cost",
+      "created_by": "636967159200000000",
+      "created_by_name": "PATRICIA",
+      "employee_number": "E001",
+      "currency_id": "16367000000000097",
+      "currency_code": "USD",
+      "paid_through_account_id": "16367000000036003",
+      "paid_through_account_name": "Employee Reimbursements",
+      "bcy_total": 13900.79,
+      "bcy_subtotal": 13900.79,
+      "total": 50.38,
+      "total_without_tax": 4.3,
+      "is_billable": true,
+      "is_reimbursable": false,
+      "reference_number": "DD145",
+      "due_days": "Due in 15 days",
+      "merchant_id": "16367000000074027",
+      "merchant_name": "ABS Solutions",
+      "status": "submitted",
+      "created_time": "2019-06-21T18:33:12+0800",
+      "last_modified_time": "2017-02-21T18:42:46+0530",
+      "receipt_name": "receipt1.jpg",
+      "report_id": "16367000000083075",
+      "mileage_type": "non_mileage",
+      "report_name": "Purchase",
+      "is_receipt_only": false,
+      "distance": 0,
+      "per_diem_rate": 0,
+      "per_diem_days": 0,
+      "per_diem_id": "",
+      "per_diem_name": "",
+      "expense_type": "non_mileage",
+      "location": "Washington",
+      "receipt_type": "jpg",
+      "policy_violated": false,
+      "comments_count": 0,
+      "report_status": "submitted",
+      "price_precision": 2,
+      "mileage_rate": 0,
+      "mileage_unit": "km",
+      "receipt_status": "processed",
+      "is_uncategorized": false,
+      "is_expired": false,
+      "gl_code": "LG001",
+      "exchange_rate": 66.943366,
+      "start_reading": "",
+      "end_reading": "",
+      "payment_mode": "Check",
+      "customer_id": "27927000000075081",
+      "customer_name": "ACME Corp.",
+      "custom_fields": [		   
+      ],
+      "project_id": "27927000001243001",
+      "project_name": "Coffee Research",
+      "transaction_description": "",
+      "tax_id": "16367000000086001",
+      "tax_name": "Sales Tax",
+      "tax_percentage": 2,
+      "amount": 207.65,
+      "is_inclusive_tax": false,
+      "vehicle_type": "Bike",
+      "vehicle_id": "17456000000078029",
+      "fuel_type": "lpg",
+      "engine_capacity_range": "between_1401cc_and_1600cc",
+      "is_personal": false,
+      "policy_id": "16367000000092011",
+      "policy_name": "LIC",
+      "documents": [
+        {
+          "file_name": "receipt1.jpg",
+          "file_size_formatted": "71.8 KB",
+          "attachment_order": 1,
+          "document_id": "16367000000083071"
+        }
+      ],
+      "reimbursement_reference": "",
+      "reimbursement_date": "",
+      "reimbursement_paid_through_account_id": "",
+      "reimbursement_paid_through_account_name": "",
+      "reimbursement_currency_id": "",
+      "reimbursement_currency_code": ""
+    }
+  ]
+}
+
+
+});
+ 
+// OPTIONAL: Render the card (requires that the adaptivecards library be loaded)
+var adaptiveCard = new AdaptiveCards.AdaptiveCard();
+adaptiveCard.parse(cardPayload);
+adaptiveCard.onExecuteAction = function(action) { alert(JSON.stringify(action.data)); }
+document.getElementById('frame').appendChild(adaptiveCard.render());
+
+
+</script>
+
+
+</body>
+</html>
