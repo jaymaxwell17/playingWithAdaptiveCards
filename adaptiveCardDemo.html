@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+
+<script src="https://unpkg.com/adaptivecards/dist/adaptivecards.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/markdown-it/dist/markdown-it.min.js"></script>
+
+	<script>
+
+var card = {
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "Image",
+            "url": "https://adaptivecards.io/content/adaptive-card-50.png"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Hello Adaptive Cards!"
+        },
+        {
+            "type": "TextBlock",
+            "text": "Date Input"
+        },
+        {
+            "type": "Input.Date",
+            "id": "date",
+            "placeholder": "Enter a date",
+            "value": "2017-10-12"
+        },
+        {
+            "type": "Media",
+            "poster": "https://adaptivecards.io/content/poster-video.png",
+            "sources": [
+                {
+                    "mimeType": "video/mp4",
+                    "url": "https://adaptivecardsblob.blob.core.windows.net/assets/AdaptiveCardsOverviewVideo.mp4"
+                }]
+        },
+        {
+      "type": "Image",
+      "url": "https://adaptivecards.io/content/cats/1.png"
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 1"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 2"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Column 3"
+            },
+            {
+              "type": "Image",
+              "url": "https://adaptivecards.io/content/cats/1.png"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "wrap": true,
+      "text": "Cards can have action sets in the middle of their body."
+    },    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.ShowCard",
+          "title": "ShowCard",
+          "card": {
+            "type": "AdaptiveCard",
+            "body": [
+              {
+                "type": "TextBlock",
+                "text": "This is a show card"
+              }
+            ]
+          }
+        },
+        {
+          "type": "Action.OpenUrl",
+          "title": "OpenUrl",
+          "url": "https://adaptivecards.io"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "wrap": true,
+      "text": "There are also still \"actions\" at the bottom of the card"
+    }
+
+
+
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Learn more",
+            "url": "https://adaptivecards.io"
+        },
+        {
+            "type": "Action.OpenUrl",
+            "title": "GitHub",
+            "url": "https://github.com/Microsoft/AdaptiveCards"
+        }, {
+      "type": "Action.ShowCard",
+      "title": "ShowCard",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "TextBlock",
+            "text": "This is a show card"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Action.OpenUrl",
+      "title": "OpenUrl",
+      "url": "https://adaptivecards.io"
+    }
+    ]
+};
+ 
+// Create an AdaptiveCard instance
+var adaptiveCard = new AdaptiveCards.AdaptiveCard();
+ 
+// Set its hostConfig property unless you want to use the default Host Config
+// Host Config defines the style and behavior of a card
+adaptiveCard.hostConfig = new AdaptiveCards.HostConfig({
+    
+	"spacing": {
+		"small": 3,
+		"default": 8,
+		"medium": 20,
+		"large": 30,
+		"extraLarge": 40,
+		"padding": 10
+	},
+	"separator": {
+		"lineThickness": 1,
+		"lineColor": "#EEEEEE"
+	},
+	"supportsInteractivity": true,
+	"fontTypes": {
+		"default": {
+			"fontFamily": "'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+			"fontSizes": {
+				"small": 12,
+				"default": 14,
+				"medium": 17,
+				"large": 21,
+				"extraLarge": 26
+			},
+			"fontWeights": {
+				"lighter": 200,
+				"default": 400,
+				"bolder": 600
+			}
+		},
+		"monospace": {
+			"fontFamily": "'Courier New', Courier, monospace",
+			"fontSizes": {
+				"small": 12,
+				"default": 14,
+				"medium": 17,
+				"large": 21,
+				"extraLarge": 26
+			},
+			"fontWeights": {
+				"lighter": 200,
+				"default": 400,
+				"bolder": 600
+			}
+		}
+	},
+	"containerStyles": {
+		"default": {
+			"backgroundColor": "#FFFFFF",
+			"foregroundColors": {
+				"default": {
+					"default": "#000000",
+					"subtle": "#767676"
+				},
+				"accent": {
+					"default": "#0063B1",
+					"subtle": "#0063B1"
+				},
+				"attention": {
+					"default": "#FF0000",
+					"subtle": "#DDFF0000"
+				},
+				"good": {
+					"default": "#54a254",
+					"subtle": "#DD54a254"
+				},
+				"warning": {
+					"default": "#c3ab23",
+					"subtle": "#DDc3ab23"
+				}
+			}
+		},
+		"emphasis": {
+			"backgroundColor": "#F0F0F0",
+			"foregroundColors": {
+				"default": {
+					"default": "#000000",
+					"subtle": "#767676"
+				},
+				"accent": {
+					"default": "#2E89FC",
+					"subtle": "#882E89FC"
+				},
+				"attention": {
+					"default": "#FF0000",
+					"subtle": "#DDFF0000"
+				},
+				"good": {
+					"default": "#54a254",
+					"subtle": "#DD54a254"
+				},
+				"warning": {
+					"default": "#c3ab23",
+					"subtle": "#DDc3ab23"
+				}
+			}
+		},
+		"accent": {
+			"backgroundColor": "#C7DEF9",
+			"foregroundColors": {
+				"default": {
+					"default": "#333333",
+					"subtle": "#EE333333"
+				},
+				"dark": {
+					"default": "#000000",
+					"subtle": "#66000000"
+				},
+				"light": {
+					"default": "#FFFFFF",
+					"subtle": "#33000000"
+				},
+				"accent": {
+					"default": "#2E89FC",
+					"subtle": "#882E89FC"
+				},
+				"attention": {
+					"default": "#cc3300",
+					"subtle": "#DDcc3300"
+				},
+				"good": {
+					"default": "#54a254",
+					"subtle": "#DD54a254"
+				},
+				"warning": {
+					"default": "#e69500",
+					"subtle": "#DDe69500"
+				}
+			}
+		},
+		"good": {
+			"backgroundColor": "#CCFFCC",
+			"foregroundColors": {
+				"default": {
+					"default": "#333333",
+					"subtle": "#EE333333"
+				},
+				"dark": {
+					"default": "#000000",
+					"subtle": "#66000000"
+				},
+				"light": {
+					"default": "#FFFFFF",
+					"subtle": "#33000000"
+				},
+				"accent": {
+					"default": "#2E89FC",
+					"subtle": "#882E89FC"
+				},
+				"attention": {
+					"default": "#cc3300",
+					"subtle": "#DDcc3300"
+				},
+				"good": {
+					"default": "#54a254",
+					"subtle": "#DD54a254"
+				},
+				"warning": {
+					"default": "#e69500",
+					"subtle": "#DDe69500"
+				}
+			}
+		},
+		"attention": {
+			"backgroundColor": "#FFC5B2",
+			"foregroundColors": {
+				"default": {
+					"default": "#333333",
+					"subtle": "#EE333333"
+				},
+				"dark": {
+					"default": "#000000",
+					"subtle": "#66000000"
+				},
+				"light": {
+					"default": "#FFFFFF",
+					"subtle": "#33000000"
+				},
+				"accent": {
+					"default": "#2E89FC",
+					"subtle": "#882E89FC"
+				},
+				"attention": {
+					"default": "#cc3300",
+					"subtle": "#DDcc3300"
+				},
+				"good": {
+					"default": "#54a254",
+					"subtle": "#DD54a254"
+				},
+				"warning": {
+					"default": "#e69500",
+					"subtle": "#DDe69500"
+				}
+			}
+		},
+		"warning": {
+			"backgroundColor": "#FFE2B2",
+			"foregroundColors": {
+				"default": {
+					"default": "#333333",
+					"subtle": "#EE333333"
+				},
+				"dark": {
+					"default": "#000000",
+					"subtle": "#66000000"
+				},
+				"light": {
+					"default": "#FFFFFF",
+					"subtle": "#33000000"
+				},
+				"accent": {
+					"default": "#2E89FC",
+					"subtle": "#882E89FC"
+				},
+				"attention": {
+					"default": "#cc3300",
+					"subtle": "#DDcc3300"
+				},
+				"good": {
+					"default": "#54a254",
+					"subtle": "#DD54a254"
+				},
+				"warning": {
+					"default": "#e69500",
+					"subtle": "#DDe69500"
+				}
+			}
+		}
+	},
+	"imageSizes": {
+		"small": 40,
+		"medium": 80,
+		"large": 160
+	},
+	"actions": {
+		"maxActions": 5,
+		"spacing": "default",
+		"buttonSpacing": 8,
+		"showCard": {
+			"actionMode": "inline",
+			"inlineTopMargin": 8
+		},
+		"actionsOrientation": "horizontal",
+		"actionAlignment": "stretch"
+	},
+	"adaptiveCard": {
+		"allowCustomStyle": false
+	},
+	"imageSet": {
+		"imageSize": "medium",
+		"maxImageHeight": 100
+	},
+	"factSet": {
+		"title": {
+			"color": "default",
+			"size": "default",
+			"isSubtle": false,
+			"weight": "bolder",
+			"wrap": true,
+			"maxWidth": 150
+		},
+		"value": {
+			"color": "default",
+			"size": "default",
+			"isSubtle": false,
+			"weight": "default",
+			"wrap": true
+		},
+		"spacing": 8
+	}
+});
+ 
+// Set the adaptive card's event handlers. onExecuteAction is invoked
+// whenever an action is clicked in the card
+adaptiveCard.onExecuteAction = function(action) { 
+alert("Ow!"); 
+console.log(action);
+
+}
+ 
+// Parse the card payload
+adaptiveCard.parse(card);
+ 
+// Render the card to an HTML element:
+var renderedCard = adaptiveCard.render();
+ 
+// And finally insert it somewhere in your page:
+document.body.appendChild(renderedCard);
+	</script>
+
+
+</body>
+</html>
