@@ -290,7 +290,8 @@ var cardPayload = template.expand({
 // OPTIONAL: Render the card (requires that the adaptivecards library be loaded)
 var adaptiveCard = new AdaptiveCards.AdaptiveCard();
 adaptiveCard.parse(cardPayload);
-adaptiveCard.onExecuteAction = function(action) { alert(JSON.stringify(action.data)); }
+adaptiveCard.onExecuteAction = function(action) { console.log(action); alert(JSON.stringify(action.data)); }
+
 document.getElementById('frame').appendChild(adaptiveCard.render());
 
 
