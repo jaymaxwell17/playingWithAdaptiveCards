@@ -1,8 +1,19 @@
 async function getAgentList(query){
-    var list;
+    var locationObject;
+    var result = await fetch('https://public.opendatasoft.com/api/records/1.0/search/?dataset=us-zip-code-latitude-and-longitude&q='+query)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            locationObject = data;
+
+            });
+
+    var latLon = locationObject.records[0].geometry.coordinates;
+    var qString = latLon[1] + '%2C+'+latLon[0];
+    
 
     
-    var url = "https://agents.farmers.com/search.html?qp="+query;
+    var url = "https://agents.farmers.com/search.html?q="+qString    //"https://agents.farmers.com/search.html?qp="+query;
     console.log(url);
 
     var agentList =  await axios.request({
